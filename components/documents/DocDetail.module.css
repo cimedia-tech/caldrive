@@ -1,0 +1,146 @@
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+}
+
+.emptyText {
+  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--text-secondary, #666);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  border-left: 3px solid #000;
+  background: var(--bg-surface, #ffffff);
+}
+
+.preview {
+  height: 240px;
+  border-bottom: 3px solid #000;
+}
+
+.iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.details {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.title {
+  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 4px;
+}
+
+.metaLabel {
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.metaValue {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionHeader {
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  border-bottom: 2px solid #000;
+  padding-bottom: 4px;
+}
+
+.italicText {
+  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-style: italic;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #666);
+  margin: 0;
+}
+
+.tagsRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.addTagBtn {
+  background: none;
+  border: 1px dashed #000;
+  padding: 4px 12px;
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.addTagBtn:hover {
+  background: #f5f5f5;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.btnOutline {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.btnOutline:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #000;
+}

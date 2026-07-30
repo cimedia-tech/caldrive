@@ -1,0 +1,142 @@
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 64px;
+  background: var(--sidebar-bg, #000);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.logo {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--font-playfair, serif);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+}
+
+.navItem {
+  width: 64px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0.5;
+  position: relative;
+  transition: opacity 150ms;
+  text-decoration: none;
+}
+
+.navItem:hover {
+  opacity: 0.8;
+}
+
+.navItemActive {
+  opacity: 1;
+}
+
+.navItemActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background: white;
+  animation: growBar 200ms ease-out;
+}
+
+.navIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.statusDots {
+  margin-top: auto;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.dotActive {
+  background: #22c55e;
+}
+
+.dotIdle {
+  background: var(--amber, #d4a030);
+}
+
+@keyframes growBar {
+  from { height: 0; }
+  to { height: 24px; }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  
+  .logo {
+    display: none;
+  }
+  
+  .nav {
+    flex-direction: row;
+    padding-top: 0;
+    width: 100%;
+    justify-content: space-around;
+  }
+  
+  .navItem {
+    width: 56px;
+  }
+  
+  .navItemActive::before {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    animation: growBarMobile 200ms ease-out;
+  }
+  
+  @keyframes growBarMobile {
+    from { width: 0; }
+    to { width: 24px; }
+  }
+  
+  .statusDots {
+    display: none;
+  }
+}

@@ -1,0 +1,134 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.breadcrumbs {
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.875rem;
+  color: var(--text-primary, #000);
+  font-weight: 600;
+}
+
+.controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.viewToggle {
+  display: flex;
+  border: 2px solid #000;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.toggleBtn.active {
+  background: #000;
+  color: #fff;
+}
+
+.sortSelect {
+  border: 2px solid #000;
+  padding: 6px 12px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: transparent;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1440px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 3px solid #000;
+  border-bottom: 3px solid #000;
+}
+
+.listHeader {
+  display: flex;
+  padding: 12px;
+  border-bottom: 1px solid #000;
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.listBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.listRow {
+  display: flex;
+  padding: 12px;
+  cursor: pointer;
+  align-items: center;
+  transition: background-color 0.15s;
+}
+
+.listRow:hover {
+  background-color: #f5f5f5;
+}
+
+.colName {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+}
+
+.icon {
+  font-size: 1.25rem;
+}
+
+.nameText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.colDate, .colSize, .colShared {
+  flex: 1;
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.875rem;
+  color: var(--text-secondary, #444);
+}

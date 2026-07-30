@@ -1,0 +1,63 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.searchInput {
+  border: 3px solid #000;
+  padding: 12px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 1rem;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--color-navy, #1a2744);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  border: 1px solid #000;
+  padding: 4px 8px;
+  background: #fff;
+}
+
+.chipName {
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.chipRemove {
+  background: none;
+  border: none;
+  margin-left: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.browseBtn {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: 2px solid #000;
+  background: transparent;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.browseBtn:hover {
+  background: #000;
+  color: #fff;
+}

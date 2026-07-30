@@ -1,0 +1,35 @@
+.bar {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  overflow-x: auto;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.square {
+  width: 10px;
+  height: 10px;
+}
+.name {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.idle { background-color: var(--color-border); opacity: 0.5; }
+.active { background-color: var(--color-forest); }
+.processing { background-color: var(--color-amber); animation: pulse 1s infinite alternate; }
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.5); opacity: 1; }
+}

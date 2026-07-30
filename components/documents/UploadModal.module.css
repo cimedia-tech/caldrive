@@ -1,0 +1,123 @@
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(250, 250, 250, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #fff;
+  border: 3px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  padding: 32px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.title {
+  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.dropZone {
+  height: 120px;
+  border: 3px dashed #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #fafafa;
+  transition: background 0.2s;
+}
+
+.dropZone:hover {
+  background: #f0f0f0;
+}
+
+.dropText {
+  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-style: italic;
+  font-size: 1.125rem;
+  color: #666;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  font-size: 2rem;
+}
+
+.fileName, .fileSize {
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.fileSize {
+  color: #666;
+}
+
+.progressContainer {
+  height: 8px;
+  border: 2px solid #000;
+  width: 100%;
+}
+
+.progressBar {
+  height: 100%;
+  background: #000;
+  width: 0%; /* Will animate in full version */
+  transition: width 0.3s;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btnPrimary {
+  padding: 12px 24px;
+  border: 2px solid #000;
+  background: #000;
+  color: #fff;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--color-burgundy, #7a2e3f);
+  transition: all 0.15s;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-burgundy, #7a2e3f);
+}
+
+.btnPrimary:disabled {
+  background: #ccc;
+  border-color: #999;
+  box-shadow: none;
+  cursor: not-allowed;
+}
