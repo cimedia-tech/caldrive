@@ -4,18 +4,21 @@ import { AgentId, AGENT_CAPABILITIES } from '@/lib/agents/types';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  let interval: NodeJS.Timeout;
   const stream = new ReadableStream({
     start(controller) {
       const encoder = new TextEncoder();
       
       const sendEvent = (data: any) => {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}
-
-`));
+        try {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+        } catch (_err) {
+          clearInterval(interval);
+        }
       };
 
       // Heartbeat
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         const randomAgent = AGENT_CAPABILITIES[Math.floor(Math.random() * AGENT_CAPABILITIES.length)];
         sendEvent({
           agentId: randomAgent.id,
@@ -24,6 +27,9 @@ export async function GET() {
           actionType: 'status'
         });
       }, 10000);
+    },
+    cancel() {
+      clearInterval(interval);
     }
   });
 
