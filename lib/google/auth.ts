@@ -23,7 +23,7 @@ export const authOptions: NextAuthConfig = {
           access_type: "offline",
           prompt: "consent",
           scope:
-            "openid email profile https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/drive.readonly",
+            "openid email profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.readonly",
         },
       },
     }),
