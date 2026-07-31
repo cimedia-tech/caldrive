@@ -7,6 +7,7 @@ import { ViewToggle, ViewType } from '@/components/calendar/ViewToggle'
 import { MonthView } from '@/components/calendar/MonthView'
 import { WeekView } from '@/components/calendar/WeekView'
 import { AgendaView } from '@/components/calendar/AgendaView'
+import { TableView } from '@/components/calendar/TableView'
 import { EventModal } from '@/components/calendar/EventModal'
 import { CalendarSidebar } from '@/components/calendar/CalendarSidebar'
 import { useSettingsStore } from '@/lib/store/settings-store'
@@ -282,6 +283,13 @@ function CalendarPageInner() {
           {activeView === 'agenda' && (
             <AgendaView
               events={events}
+              onEventClick={handleEventClick}
+            />
+          )}
+          {activeView === 'table' && (
+            <TableView
+              events={events}
+              calendars={calendars}
               onEventClick={handleEventClick}
             />
           )}

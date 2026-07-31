@@ -3,7 +3,7 @@
 import React from 'react'
 import styles from './ViewToggle.module.css'
 
-export type ViewType = 'week' | 'month' | 'agenda'
+export type ViewType = 'week' | 'month' | 'agenda' | 'table'
 
 interface ViewToggleProps {
   activeView: ViewType
@@ -11,7 +11,7 @@ interface ViewToggleProps {
 }
 
 export function ViewToggle({ activeView, onChange }: ViewToggleProps) {
-  const views: ViewType[] = ['week', 'month', 'agenda']
+  const views: ViewType[] = ['week', 'month', 'agenda', 'table']
   
   return (
     <div className={styles.container}>

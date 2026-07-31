@@ -1,0 +1,137 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.count {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #666);
+}
+
+.tableWrap {
+  border: 2px solid #000;
+  overflow: auto;
+  flex: 1;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.table th {
+  background: #000;
+  color: #fff;
+  padding: 10px 14px;
+  text-align: left;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  white-space: nowrap;
+  border-right: 1px solid #333;
+}
+
+.table th:last-child {
+  border-right: none;
+}
+
+.table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #eaeaea;
+  vertical-align: top;
+}
+
+.table tr:hover td {
+  background: #f5f5f5;
+}
+
+.table tr {
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.calendarDot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.calendarCell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meetLink {
+  color: #1a73e8;
+  text-decoration: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.meetLink:hover {
+  text-decoration: underline;
+}
+
+.noMeet {
+  color: #bbb;
+  font-size: 0.75rem;
+}
+
+.empty {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-tertiary, #999);
+  font-style: italic;
+}
+
+.dateCol {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.timeCol {
+  white-space: nowrap;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.titleCol {
+  font-weight: 600;
+  min-width: 180px;
+}
+
+.locationCol {
+  color: #555;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
