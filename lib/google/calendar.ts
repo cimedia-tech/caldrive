@@ -52,6 +52,7 @@ export async function createEvent(
     calendarId,
     requestBody: eventData,
     supportsAttachments: true,
+    conferenceDataVersion: 1,
   })
   return res.data
 }
@@ -68,6 +69,7 @@ export async function updateEvent(
     eventId,
     requestBody: patch,
     supportsAttachments: true,
+    conferenceDataVersion: 1,
   })
   return res.data
 }

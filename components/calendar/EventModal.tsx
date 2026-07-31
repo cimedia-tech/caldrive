@@ -6,15 +6,24 @@ import type { CalendarEvent } from '@/lib/store/calendar-store'
 import styles from './EventModal.module.css'
 import Modal from '@/components/ui/Modal'
 
+interface CalendarOption {
+  id: string
+  summary: string
+  backgroundColor?: string
+  primary?: boolean
+}
+
 interface EventModalProps {
   isOpen: boolean
   onClose: () => void
   event: CalendarEvent | null
-  onSave: (eventData: Partial<CalendarEvent>) => void
+  onSave: (eventData: Partial<CalendarEvent> & { calendarId?: string }) => void
   /** Date pre-filled when the modal opens from a calendar cell click */
   initialDate?: Date | null
   /** Default event length in minutes (from Settings) */
   defaultDurationMin?: number
+  /** Available calendars for the selector */
+  calendars?: CalendarOption[]
 }
 
 function toDateInputValue(d: Date): string {
@@ -28,13 +37,19 @@ function toTimeInputValue(d: Date): string {
   return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
 }
 
-export function EventModal({ isOpen, onClose, event, onSave, initialDate, defaultDurationMin = 60 }: EventModalProps) {
+function generateRequestId(): string {
+  return `meet-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+}
+
+export function EventModal({ isOpen, onClose, event, onSave, initialDate, defaultDurationMin = 60, calendars = [] }: EventModalProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
   const [date, setDate] = useState('')
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
+  const [calendarId, setCalendarId] = useState('primary')
+  const [addMeet, setAddMeet] = useState(true)
 
   useEffect(() => {
     if (event) {
@@ -46,6 +61,7 @@ export function EventModal({ isOpen, onClose, event, onSave, initialDate, defaul
       setDate(toDateInputValue(start))
       setStartTime(toTimeInputValue(start))
       setEndTime(toTimeInputValue(end))
+      setAddMeet(true)
     } else {
       const base = initialDate ? new Date(initialDate) : new Date()
       // Round up to the next half hour for a sensible default start
@@ -57,8 +73,12 @@ export function EventModal({ isOpen, onClose, event, onSave, initialDate, defaul
       setDate(toDateInputValue(initialDate ?? base))
       setStartTime(toTimeInputValue(base))
       setEndTime(toTimeInputValue(end))
+      setAddMeet(true)
     }
-  }, [event, isOpen, initialDate, defaultDurationMin])
+    // Default to primary calendar
+    const primary = calendars.find(c => c.primary)
+    setCalendarId(primary?.id || 'primary')
+  }, [event, isOpen, initialDate, defaultDurationMin, calendars])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -69,13 +89,26 @@ export function EventModal({ isOpen, onClose, event, onSave, initialDate, defaul
       // Guard against inverted ranges; fall back to the default duration
       endDate = new Date(startDate.getTime() + defaultDurationMin * 60000)
     }
-    onSave({
+
+    const eventData: Partial<CalendarEvent> & { calendarId?: string; conferenceData?: unknown } = {
       summary: title,
       description,
       location,
       start: { dateTime: startDate.toISOString() },
-      end: { dateTime: endDate.toISOString() }
-    })
+      end: { dateTime: endDate.toISOString() },
+      calendarId,
+    }
+
+    if (addMeet) {
+      eventData.conferenceData = {
+        createRequest: {
+          requestId: generateRequestId(),
+          conferenceSolutionKey: { type: 'hangoutsMeet' }
+        }
+      }
+    }
+
+    onSave(eventData)
   }
 
   return (
@@ -88,6 +121,23 @@ export function EventModal({ isOpen, onClose, event, onSave, initialDate, defaul
           onChange={(e) => setTitle(e.target.value)}
           autoFocus
         />
+
+        {calendars.length > 1 && (
+          <div className={styles.field}>
+            <label className="mono uppercase text-xs">Calendar</label>
+            <select
+              className={styles.select}
+              value={calendarId}
+              onChange={(e) => setCalendarId(e.target.value)}
+            >
+              {calendars.map(cal => (
+                <option key={cal.id} value={cal.id}>
+                  {cal.summary}{cal.primary ? ' (Primary)' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         
         <div className={styles.grid}>
           <div className={styles.field}>
@@ -109,6 +159,28 @@ export function EventModal({ isOpen, onClose, event, onSave, initialDate, defaul
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
+        </div>
+
+        {/* Google Meet Toggle */}
+        <div 
+          className={`${styles.meetToggle} ${addMeet ? styles.meetToggleActive : ''}`}
+          onClick={() => setAddMeet(!addMeet)}
+        >
+          <div className={`${styles.toggleSwitch} ${addMeet ? styles.on : ''}`}>
+            <div className={styles.toggleKnob} />
+          </div>
+          <div className={styles.meetLabel}>
+            <div className={styles.meetLabelTitle}>
+              <svg className={styles.meetIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+              </svg>
+              Add Google Meet video conferencing
+            </div>
+            <div className={styles.meetLabelSub}>
+              {addMeet ? 'A Meet link will be generated and added to this event' : 'No video conferencing for this event'}
+            </div>
+          </div>
         </div>
 
         <div className={styles.field}>
