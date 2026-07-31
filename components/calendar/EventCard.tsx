@@ -7,9 +7,10 @@ interface EventCardProps {
   event: CalendarEvent
   variant: 'pill' | 'block'
   onClick?: () => void
+  draggable?: boolean
 }
 
-export function EventCard({ event, variant, onClick }: EventCardProps) {
+export function EventCard({ event, variant, onClick, draggable = false }: EventCardProps) {
   const colorMap: Record<string, string> = {
     '1': '#a4bdfc', '2': '#7ae7bf', '3': '#dbadff', '4': '#ff887c',
     '5': '#fbd75b', '6': '#ffb878', '7': '#46d6db', '8': '#e1e1e1',
@@ -19,13 +20,36 @@ export function EventCard({ event, variant, onClick }: EventCardProps) {
   const bgColor = event.colorId ? colorMap[event.colorId] || '#5484ed' : '#5484ed'
   const title = event.summary || '(No title)'
 
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      eventId: event.id,
+      summary: event.summary,
+      start: event.start,
+      end: event.end,
+    }))
+    e.dataTransfer.effectAllowed = 'move'
+    // Add a subtle opacity to the dragged element
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '0.5'
+    }
+  }
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '1'
+    }
+  }
+
   if (variant === 'pill') {
     return (
       <div 
         onClick={onClick}
+        draggable={draggable}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
         style={{ backgroundColor: bgColor }}
         className="text-xs px-1 py-0.5 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer mono"
-        title={title}
+        title={`${title} (drag to reschedule)`}
       >
         {title}
       </div>
@@ -38,6 +62,9 @@ export function EventCard({ event, variant, onClick }: EventCardProps) {
   return (
     <div 
       onClick={onClick}
+      draggable={draggable}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       className="bg-white border cursor-pointer overflow-hidden px-1 py-1 shadow-sm hover:shadow-md transition-shadow"
       style={{ borderLeft: `4px solid ${bgColor}` }}
     >

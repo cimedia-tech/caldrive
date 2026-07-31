@@ -37,43 +37,37 @@ function CalendarPageInner() {
   const defaultCalendarView = useSettingsStore((s) => s.defaultCalendarView)
   const defaultEventDurationMin = useSettingsStore((s) => s.defaultEventDurationMin)
 
-  // null = follow the Settings default; a value = user changed it this session
   const [viewOverride, setViewOverride] = useState<ViewType | null>(null)
   const activeView: ViewType = viewOverride ?? defaultCalendarView
   const setActiveView = (v: ViewType) => setViewOverride(v)
 
-  // Deep link support: /calendar?new=1 opens the New Event modal
   const openedViaLink = searchParams.get('new') === '1'
   const [isEventModalOpen, setEventModalOpen] = useState(openedViaLink)
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [modalDate, setModalDate] = useState<Date | null>(openedViaLink ? new Date() : null)
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null)
 
   // Multi-calendar state
   const [calendars, setCalendars] = useState<CalendarInfo[]>([])
   const [activeCalendarIds, setActiveCalendarIds] = useState<string[]>(['primary'])
 
-  // Clean the deep-link param from the URL after consuming it
   useEffect(() => {
     if (searchParams.get('new') === '1') {
       router.replace('/calendar')
     }
   }, [searchParams, router])
 
-  // When calendars are loaded, activate all of them and fetch events
   const handleCalendarsLoaded = useCallback((cals: CalendarInfo[]) => {
     setCalendars(cals)
-    const allIds = cals.map(c => c.id)
-    setActiveCalendarIds(allIds)
+    setActiveCalendarIds(cals.map(c => c.id))
   }, [])
 
-  // Fetch events from all active calendars
   const fetchAllEvents = useCallback(async () => {
     if (activeCalendarIds.length === 0) {
       setEvents([])
       return
     }
-
     try {
       const allEvents: CalendarEvent[] = []
       for (const calId of activeCalendarIds) {
@@ -81,7 +75,6 @@ function CalendarPageInner() {
         if (res.ok) {
           const data = await res.json()
           const items = Array.isArray(data) ? data : (data.items || [])
-          // Tag each event with its calendar source for color coding
           const tagged = items.map((e: CalendarEvent) => ({
             ...e,
             colorId: e.colorId || calendars.find(c => c.id === calId)?.backgroundColor,
@@ -89,7 +82,6 @@ function CalendarPageInner() {
           allEvents.push(...tagged)
         }
       }
-      // Deduplicate by event id
       const unique = Array.from(new Map(allEvents.map(e => [e.id, e])).values())
       setEvents(unique)
     } catch (err) {
@@ -107,11 +99,15 @@ function CalendarPageInner() {
     )
   }
 
+  // Click event → open edit modal
   const handleEventClick = (event: CalendarEvent) => {
-    router.push(`/calendar/${event.id}`)
+    setEditingEvent(event)
+    setModalDate(null)
+    setEventModalOpen(true)
   }
 
   const handleDateClick = (date: Date) => {
+    setEditingEvent(null)
     setModalDate(date)
     setEventModalOpen(true)
   }
@@ -126,30 +122,114 @@ function CalendarPageInner() {
     }
   }
 
+  // Create new event
   const handleSave = async (eventData: Partial<CalendarEvent> & { calendarId?: string }) => {
     try {
       const { calendarId = 'primary', ...rest } = eventData
-      const res = await fetch('/api/calendar/events', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ calendarId, ...rest })
-      })
-      if (res.ok) {
-        const newEvent = await res.json()
-        setEvents(prev => [...prev, newEvent])
-        setEventModalOpen(false)
 
-        // Show Meet link if one was created
-        if (newEvent.hangoutLink) {
-          // Brief delay so the modal closes first
-          setTimeout(() => {
-            alert(`✅ Event created!\n\nGoogle Meet link:\n${newEvent.hangoutLink}`)
-          }, 300)
+      if (editingEvent) {
+        // PATCH existing event
+        const res = await fetch(`/api/calendar/events/${editingEvent.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ calendarId, ...rest })
+        })
+        if (res.ok) {
+          const updated = await res.json()
+          setEvents(prev => prev.map(e => e.id === updated.id ? updated : e))
+          setEventModalOpen(false)
+          setEditingEvent(null)
+        }
+      } else {
+        // POST new event
+        const res = await fetch('/api/calendar/events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ calendarId, ...rest })
+        })
+        if (res.ok) {
+          const newEvent = await res.json()
+          setEvents(prev => [...prev, newEvent])
+          setEventModalOpen(false)
+
+          if (newEvent.hangoutLink) {
+            setTimeout(() => {
+              alert(`✅ Event created!\n\nGoogle Meet link:\n${newEvent.hangoutLink}`)
+            }, 300)
+          }
         }
       }
     } catch (err) {
       console.error(err)
     }
+  }
+
+  // Drag-and-drop: move event to a new date (MonthView)
+  const handleEventDropMonth = async (eventId: string, newDate: Date) => {
+    const event = events.find(e => e.id === eventId)
+    if (!event) return
+
+    const oldStart = new Date(event.start?.dateTime || event.start?.date || '')
+    const oldEnd = new Date(event.end?.dateTime || event.end?.date || '')
+    const duration = oldEnd.getTime() - oldStart.getTime()
+
+    // Preserve the original time, just change the date
+    const newStart = new Date(newDate)
+    newStart.setHours(oldStart.getHours(), oldStart.getMinutes(), 0, 0)
+    const newEnd = new Date(newStart.getTime() + duration)
+
+    try {
+      const res = await fetch(`/api/calendar/events/${eventId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          start: { dateTime: newStart.toISOString() },
+          end: { dateTime: newEnd.toISOString() },
+        })
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setEvents(prev => prev.map(e => e.id === updated.id ? updated : e))
+      }
+    } catch (err) {
+      console.error('Failed to move event:', err)
+    }
+  }
+
+  // Drag-and-drop: move event to a new date+hour (WeekView)
+  const handleEventDropWeek = async (eventId: string, newDate: Date, newHour: number) => {
+    const event = events.find(e => e.id === eventId)
+    if (!event) return
+
+    const oldStart = new Date(event.start?.dateTime || event.start?.date || '')
+    const oldEnd = new Date(event.end?.dateTime || event.end?.date || '')
+    const duration = oldEnd.getTime() - oldStart.getTime()
+
+    const newStart = new Date(newDate)
+    newStart.setHours(newHour, 0, 0, 0)
+    const newEnd = new Date(newStart.getTime() + duration)
+
+    try {
+      const res = await fetch(`/api/calendar/events/${eventId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          start: { dateTime: newStart.toISOString() },
+          end: { dateTime: newEnd.toISOString() },
+        })
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setEvents(prev => prev.map(e => e.id === updated.id ? updated : e))
+      }
+    } catch (err) {
+      console.error('Failed to move event:', err)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setEventModalOpen(false)
+    setEditingEvent(null)
   }
 
   return (
@@ -181,6 +261,7 @@ function CalendarPageInner() {
               events={events}
               onDateClick={handleDateClick}
               onEventClick={handleEventClick}
+              onEventDrop={handleEventDropMonth}
             />
           )}
           {activeView === 'week' && (
@@ -191,9 +272,11 @@ function CalendarPageInner() {
               onTimeSlotClick={(date, hour) => {
                 const d = new Date(date)
                 d.setHours(hour, 0, 0, 0)
+                setEditingEvent(null)
                 setModalDate(d)
                 setEventModalOpen(true)
               }}
+              onEventDrop={handleEventDropWeek}
             />
           )}
           {activeView === 'agenda' && (
@@ -207,15 +290,15 @@ function CalendarPageInner() {
 
       <button
         className="fixed bottom-8 right-8 btn shadow-card"
-        onClick={() => { setModalDate(new Date()); setEventModalOpen(true) }}
+        onClick={() => { setEditingEvent(null); setModalDate(new Date()); setEventModalOpen(true) }}
       >
         NEW EVENT
       </button>
 
       <EventModal
         isOpen={isEventModalOpen}
-        onClose={() => setEventModalOpen(false)}
-        event={null}
+        onClose={handleCloseModal}
+        event={editingEvent}
         initialDate={modalDate}
         defaultDurationMin={defaultEventDurationMin}
         onSave={handleSave}

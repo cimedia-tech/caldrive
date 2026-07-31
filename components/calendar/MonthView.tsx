@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { getMonthDates, getDayHeaders, isToday, isSameDay } from '@/lib/utils/date'
 import { useSettingsStore } from '@/lib/store/settings-store'
 import type { CalendarEvent } from '@/lib/store/calendar-store'
@@ -12,14 +12,39 @@ interface MonthViewProps {
   events: CalendarEvent[]
   onDateClick: (date: Date) => void
   onEventClick: (event: CalendarEvent) => void
+  onEventDrop?: (eventId: string, newDate: Date) => void
 }
 
-export function MonthView({ currentDate, events, onDateClick, onEventClick }: MonthViewProps) {
+export function MonthView({ currentDate, events, onDateClick, onEventClick, onEventDrop }: MonthViewProps) {
   const weekStartsOn = useSettingsStore((s) => s.weekStartsOn)
   const dates = getMonthDates(currentDate.getFullYear(), currentDate.getMonth(), weekStartsOn).flat()
   const daysOfWeek = getDayHeaders(weekStartsOn)
   const monthName = currentDate.toLocaleString('default', { month: 'long' })
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOverIndex(index)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, targetDate: Date) => {
+    e.preventDefault()
+    setDragOverIndex(null)
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'))
+      if (data.eventId && onEventDrop) {
+        onEventDrop(data.eventId, targetDate)
+      }
+    } catch {
+      // ignore invalid drag data
+    }
+  }
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -39,12 +64,16 @@ export function MonthView({ currentDate, events, onDateClick, onEventClick }: Mo
           const dayEvents = events.filter(e => e.start && isSameDay(new Date(e.start.dateTime || e.start.date || ''), date))
           const visibleEvents = dayEvents.slice(0, 3)
           const moreCount = dayEvents.length - 3
+          const isDragTarget = dragOverIndex === i
           
           return (
             <div 
               key={i} 
-              className={`${styles.cell} ${!isCurrentMonth ? styles.outside : ''} ${today ? styles.today : ''}`}
+              className={`${styles.cell} ${!isCurrentMonth ? styles.outside : ''} ${today ? styles.today : ''} ${isDragTarget ? styles.dropTarget : ''}`}
               onClick={() => onDateClick(date)}
+              onDragOver={(e) => handleDragOver(e, i)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, date)}
             >
               <div className={`${styles.dateNumber} mono ${isCurrentMonth ? styles.bold : ''}`}>
                 {date.getDate()}
@@ -53,7 +82,7 @@ export function MonthView({ currentDate, events, onDateClick, onEventClick }: Mo
               <div className={styles.eventList}>
                 {visibleEvents.map(event => (
                   <div key={event.id} onClick={(e) => { e.stopPropagation(); onEventClick(event); }}>
-                    <EventCard event={event} variant="pill" />
+                    <EventCard event={event} variant="pill" draggable />
                   </div>
                 ))}
                 {moreCount > 0 && (
