@@ -112,3 +112,23 @@
 .menuItem:hover {
   background: var(--bg);
 }
+
+.signInBtn {
+  background: var(--navy, #1e293b);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.15s ease;
+}
+
+.signInBtn:hover {
+  opacity: 0.9;
+}
+
