@@ -20,12 +20,17 @@ export default function DashboardPage() {
   const date = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   useEffect(() => {
-    fetch('/api/calendar/events')
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
+    
+    fetch(`/api/calendar/events?timeMin=${encodeURIComponent(startOfDay)}&timeMax=${encodeURIComponent(endOfDay)}`)
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
-        if (data?.items) {
-          const today = new Date();
-          const events = (data.items as CalendarEvent[])
+        if (data) {
+          // API returns a flat array (or { items: [...] } if raw Google response)
+          const items: CalendarEvent[] = Array.isArray(data) ? data : (data.items || []);
+          const events = items
             .filter(e => {
               const start = e.start?.dateTime || e.start?.date;
               return start && isSameDay(new Date(start), today);
