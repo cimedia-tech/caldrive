@@ -10,6 +10,17 @@ interface EventCardProps {
   draggable?: boolean
 }
 
+/** Determine if text should be white or black based on background luminance */
+function getContrastText(hex: string): string {
+  const c = hex.replace('#', '')
+  const r = parseInt(c.substring(0, 2), 16)
+  const g = parseInt(c.substring(2, 4), 16)
+  const b = parseInt(c.substring(4, 6), 16)
+  // Relative luminance formula
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance > 0.55 ? '#1a1a1a' : '#ffffff'
+}
+
 export function EventCard({ event, variant, onClick, draggable = false }: EventCardProps) {
   const colorMap: Record<string, string> = {
     '1': '#a4bdfc', '2': '#7ae7bf', '3': '#dbadff', '4': '#ff887c',
@@ -17,7 +28,17 @@ export function EventCard({ event, variant, onClick, draggable = false }: EventC
     '9': '#5484ed', '10': '#51b749', '11': '#dc2127'
   }
   
-  const bgColor = event.colorId ? colorMap[event.colorId] || '#5484ed' : '#5484ed'
+  // Support both numeric colorId and hex backgroundColor strings
+  let bgColor = '#5484ed'
+  if (event.colorId) {
+    if (event.colorId.startsWith('#')) {
+      bgColor = event.colorId
+    } else {
+      bgColor = colorMap[event.colorId] || '#5484ed'
+    }
+  }
+
+  const textColor = getContrastText(bgColor)
   const title = event.summary || '(No title)'
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -28,7 +49,6 @@ export function EventCard({ event, variant, onClick, draggable = false }: EventC
       end: event.end,
     }))
     e.dataTransfer.effectAllowed = 'move'
-    // Add a subtle opacity to the dragged element
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.style.opacity = '0.5'
     }
@@ -47,7 +67,7 @@ export function EventCard({ event, variant, onClick, draggable = false }: EventC
         draggable={draggable}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        style={{ backgroundColor: bgColor }}
+        style={{ backgroundColor: bgColor, color: textColor }}
         className="text-xs px-1 py-0.5 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer mono"
         title={`${title} (drag to reschedule)`}
       >
@@ -65,11 +85,11 @@ export function EventCard({ event, variant, onClick, draggable = false }: EventC
       draggable={draggable}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      className="bg-white border cursor-pointer overflow-hidden px-1 py-1 shadow-sm hover:shadow-md transition-shadow"
-      style={{ borderLeft: `4px solid ${bgColor}` }}
+      className="border cursor-pointer overflow-hidden px-1 py-1 shadow-sm hover:shadow-md transition-shadow"
+      style={{ borderLeft: `4px solid ${bgColor}`, background: '#fff' }}
     >
-      <div className="text-xs font-bold whitespace-nowrap overflow-hidden text-ellipsis">{title}</div>
-      {timeStr && <div className="text-tiny mono text-muted">{timeStr}</div>}
+      <div className="text-xs font-bold whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: '#1a1a1a' }}>{title}</div>
+      {timeStr && <div className="text-tiny mono" style={{ color: '#666' }}>{timeStr}</div>}
     </div>
   )
 }
