@@ -5,7 +5,15 @@ import styles from "./AgentCard.module.css";
 import Toggle from "@/components/ui/Toggle";
 
 interface AgentCardProps {
-  agent: any; 
+  agent: {
+    id: string;
+    name: string;
+    description: string;
+    color: string;
+    icon: string;
+    active: boolean;
+    status: string;
+  }; 
   onToggle: (id: string, active: boolean) => void;
   onClick: (id: string) => void;
 }

@@ -9,7 +9,7 @@ export async function GET() {
     start(controller) {
       const encoder = new TextEncoder();
       
-      const sendEvent = (data: any) => {
+      const sendEvent = (data: Record<string, unknown>) => {
         try {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
         } catch (_err) {

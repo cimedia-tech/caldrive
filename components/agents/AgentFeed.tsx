@@ -4,20 +4,29 @@ import React, { useEffect, useState } from "react";
 import styles from "./AgentFeed.module.css";
 import Button from "@/components/ui/Button";
 import { AGENT_CAPABILITIES } from "@/lib/agents/types";
+import { useAgentStore, AgentActivity } from "@/lib/store/agent-store";
+import { useSettingsStore } from "@/lib/store/settings-store";
 
 export default function AgentFeed() {
-  const [feed, setFeed] = useState<any[]>([]);
+  const [feed, setFeed] = useState<AgentActivity[]>([]);
+  const feedMaxItems = useSettingsStore((s) => s.feedMaxItems);
+  const agentsEnabled = useSettingsStore((s) => s.agentsEnabled);
+  const addFeedEntry = useAgentStore((state) => state.addFeedEntry);
+  const clearStoreFeed = useAgentStore((state) => state.clearFeed);
 
   useEffect(() => {
     const evtSource = new EventSource("/api/agents/feed");
     evtSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      setFeed((prev) => [data, ...prev].slice(0, 50));
+      // Skip activity from agents the user has disabled in Settings
+      if (data.agentId && agentsEnabled[data.agentId as keyof typeof agentsEnabled] === false) return;
+      setFeed((prev) => [data, ...prev].slice(0, feedMaxItems));
+      addFeedEntry(data);
     };
     return () => evtSource.close();
-  }, []);
+  }, [feedMaxItems, agentsEnabled, addFeedEntry]);
 
-  const clearFeed = () => setFeed([]);
+  const clearFeed = () => { setFeed([]); clearStoreFeed(); };
 
   return (
     <div className={styles.container}>

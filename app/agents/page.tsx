@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import TopBar from "@/components/layout/TopBar";
 import AgentStatusBar from "@/components/agents/AgentStatusBar";
 import AgentCard from "@/components/agents/AgentCard";
@@ -8,12 +9,25 @@ import AgentFeed from "@/components/agents/AgentFeed";
 import AgentChat from "@/components/agents/AgentChat";
 import OptimizerPanel from "@/components/agents/OptimizerPanel";
 import SearchCommand from "@/components/agents/SearchCommand";
-import { AGENT_CAPABILITIES } from "@/lib/agents/types";
+import { AGENT_CAPABILITIES, AgentId } from "@/lib/agents/types";
+import { useSettingsStore } from "@/lib/store/settings-store";
 
-export default function AgentsPage() {
+function AgentsPageInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const agentsEnabled = useSettingsStore((s) => s.agentsEnabled);
+  const setAgentEnabled = useSettingsStore((s) => s.setAgentEnabled);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
-  const [optimizerOpen, setOptimizerOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  // Deep links: /agents?optimize=1 opens the optimizer, ?search=1 opens search
+  const [optimizerOpen, setOptimizerOpen] = useState(() => searchParams.get("optimize") === "1");
+  const [searchOpen, setSearchOpen] = useState(() => searchParams.get("search") === "1");
+
+  // Clean the deep-link params from the URL after consuming them
+  useEffect(() => {
+    if (searchParams.get("optimize") === "1" || searchParams.get("search") === "1") {
+      router.replace("/agents");
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -27,7 +41,7 @@ export default function AgentsPage() {
   }, []);
 
   const handleToggle = (id: string, active: boolean) => {
-    console.log("Toggle", id, active);
+    setAgentEnabled(id as AgentId, active);
   };
 
   const activeAgentInfo = selectedAgent ? AGENT_CAPABILITIES.find(a => a.id === selectedAgent) : null;
@@ -43,7 +57,7 @@ export default function AgentsPage() {
           {AGENT_CAPABILITIES.map(agent => (
             <AgentCard 
               key={agent.id} 
-              agent={{...agent, active: true, status: 'idle'}} 
+              agent={{...agent, active: agentsEnabled[agent.id] !== false, status: 'idle'}} 
               onToggle={handleToggle}
               onClick={setSelectedAgent}
             />
@@ -73,5 +87,13 @@ export default function AgentsPage() {
       <OptimizerPanel isOpen={optimizerOpen} onClose={() => setOptimizerOpen(false)} />
       <SearchCommand isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
+  );
+}
+
+export default function AgentsPage() {
+  return (
+    <Suspense>
+      <AgentsPageInner />
+    </Suspense>
   );
 }

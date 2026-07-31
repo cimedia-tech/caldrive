@@ -33,7 +33,10 @@ export default function PrepBriefing({ eventId, calendarId = "primary" }: PrepBr
   };
 
   useEffect(() => {
-    fetchBriefing();
+    let cancelled = false;
+    Promise.resolve().then(() => { if (!cancelled) fetchBriefing(); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
 
   return (

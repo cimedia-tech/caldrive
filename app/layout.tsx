@@ -9,7 +9,10 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains' })
 
 export const metadata: Metadata = {
-  title: 'CalDrive',
+  title: {
+    default: 'CalDrive',
+    template: '%s — CalDrive',
+  },
   description: 'Calendar × Documents × Agent Teams',
 }
 

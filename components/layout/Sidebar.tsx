@@ -10,6 +10,7 @@ export default function Sidebar() {
   const navItems = [
     {
       href: '/',
+      label: 'Dashboard',
       icon: (
         <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="7" height="7"></rect>
@@ -21,6 +22,7 @@ export default function Sidebar() {
     },
     {
       href: '/calendar',
+      label: 'Calendar',
       icon: (
         <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -32,6 +34,7 @@ export default function Sidebar() {
     },
     {
       href: '/documents',
+      label: 'Documents',
       icon: (
         <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
@@ -40,6 +43,7 @@ export default function Sidebar() {
     },
     {
       href: '/agents',
+      label: 'Agents',
       icon: (
         <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -57,6 +61,7 @@ export default function Sidebar() {
     },
     {
       href: '/settings',
+      label: 'Settings',
       icon: (
         <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="3"></circle>
@@ -74,6 +79,8 @@ export default function Sidebar() {
           <Link
             key={item.href}
             href={item.href}
+            title={item.label}
+            aria-label={item.label}
             className={`${styles.navItem} ${pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href)) ? styles.navItemActive : ''}`}
           >
             {item.icon}

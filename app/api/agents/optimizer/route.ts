@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     
     const events = await listEvents(session.accessToken, calendarId, timeMin, timeMax);
     
-    const context = JSON.stringify((events || []).map((e: any) => ({
+    const context = JSON.stringify((events || []).map((e) => ({
       title: e.summary,
       start: e.start,
       end: e.end,

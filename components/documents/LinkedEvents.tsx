@@ -9,7 +9,7 @@ interface LinkedEventsProps {
 }
 
 export default function LinkedEvents({ fileUrl }: LinkedEventsProps) {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<{ id: string; summary?: string; htmlLink?: string; start?: { dateTime?: string; date?: string }; attachments?: { fileUrl?: string }[] }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,8 +23,8 @@ export default function LinkedEvents({ fileUrl }: LinkedEventsProps) {
         const res = await fetch(`/api/calendar/events?calendarId=primary&timeMin=${timeMin.toISOString()}&timeMax=${timeMax.toISOString()}`);
         if (res.ok) {
           const data = await res.json();
-          const linked = data.filter((ev: any) => 
-            ev.attachments?.some((att: any) => att.fileUrl === fileUrl)
+          const linked = data.filter((ev: { attachments?: { fileUrl?: string }[] }) => 
+            ev.attachments?.some((att: { fileUrl?: string }) => att.fileUrl === fileUrl)
           );
           setEvents(linked);
         }

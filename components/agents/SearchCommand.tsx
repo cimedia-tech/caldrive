@@ -11,7 +11,7 @@ interface SearchCommandProps {
 
 export default function SearchCommand({ isOpen, onClose }: SearchCommandProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<{events: any[], files: any[], summary: string}>({events: [], files: [], summary: ""});
+  const [results, setResults] = useState<{events: {id: string; summary?: string; htmlLink?: string}[], files: {id: string; name?: string; webViewLink?: string}[], summary: string}>({events: [], files: [], summary: ""});
   const router = useRouter();
 
   useEffect(() => {

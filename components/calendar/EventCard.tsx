@@ -38,11 +38,11 @@ export function EventCard({ event, variant, onClick }: EventCardProps) {
   return (
     <div 
       onClick={onClick}
-      className="bg-white border cursor-pointer overflow-hidden p-1 shadow-sm hover:shadow-md transition-shadow"
+      className="bg-white border cursor-pointer overflow-hidden px-1 py-1 shadow-sm hover:shadow-md transition-shadow"
       style={{ borderLeft: `4px solid ${bgColor}` }}
     >
       <div className="text-xs font-bold whitespace-nowrap overflow-hidden text-ellipsis">{title}</div>
-      {timeStr && <div className="text-[10px] mono text-gray-500">{timeStr}</div>}
+      {timeStr && <div className="text-tiny mono text-muted">{timeStr}</div>}
     </div>
   )
 }

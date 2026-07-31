@@ -610,3 +610,89 @@ code, pre {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
+
+/* ============================================
+   ALIAS VARIABLES
+   Several components reference --color-*, --font-serif/sans/mono,
+   and numeric --space-N tokens. Map them to the design system so
+   colors, fonts, and spacing resolve everywhere.
+   ============================================ */
+:root {
+  --color-navy: var(--navy);
+  --color-terracotta: var(--terracotta);
+  --color-forest: var(--forest);
+  --color-amber: var(--amber);
+  --color-steel: var(--steel);
+  --color-burgundy: var(--burgundy);
+  --color-border: var(--border);
+  --color-foreground: var(--text-primary);
+  --color-background: var(--bg);
+
+  --font-serif: var(--font-heading);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   Pages under /calendar and /documents were written with
+   utility-style class names but no utility framework is installed.
+   These cover every utility class actually used in the codebase.
+   ============================================ */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-1 { flex: 1 1 0%; }
+.h-screen { height: 100vh; }
+.w-96 { width: 24rem; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.self-center { align-self: center; }
+.gap-2 { gap: 8px; }
+.p-4 { padding: 16px; }
+.p-6 { padding: 24px; }
+.p-8 { padding: 32px; }
+.px-1 { padding-left: 4px; padding-right: 4px; }
+.py-0\.5 { padding-top: 2px; padding-bottom: 2px; }
+.py-1 { padding-top: 4px; padding-bottom: 4px; }
+.mt-2 { margin-top: 8px; }
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.border { border: 1px solid var(--border); }
+.border-2 { border: 2px solid var(--border); }
+.border-b-2 { border-bottom: 2px solid var(--border); }
+.border-l-2 { border-left: 2px solid var(--border); }
+.border-black { border-color: #000; }
+.border-dashed { border-style: dashed; }
+.bg-white { background: #fff; }
+.bg-app { background: var(--bg); }
+.overflow-auto { overflow: auto; }
+.overflow-hidden { overflow: hidden; }
+.whitespace-nowrap { white-space: nowrap; }
+.text-ellipsis { text-overflow: ellipsis; }
+.text-center { text-align: center; }
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-tiny { font-size: 10px; }
+.font-bold { font-weight: 700; }
+.italic { font-style: italic; }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-tertiary); }
+.cursor-pointer { cursor: pointer; }
+.fixed { position: fixed; }
+.bottom-8 { bottom: 32px; }
+.right-8 { right: 32px; }
+.shadow-card { box-shadow: var(--shadow-card); }
+.shadow-card:hover { box-shadow: var(--shadow-card-hover); }
+.shadow-sm { box-shadow: var(--shadow-subtle); }
+.hover\:shadow-md:hover { box-shadow: var(--shadow-card); }
+.transition-shadow { transition: box-shadow 0.15s ease; }

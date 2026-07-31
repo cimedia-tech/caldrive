@@ -13,10 +13,12 @@ export interface DriveFile {
   webViewLink?: string;
   shared?: boolean;
   owner?: string;
+  parents?: string[];
 }
 
 interface DocGridProps {
   files: DriveFile[];
+  breadcrumbs?: string;
   viewMode: 'grid' | 'list';
   sortBy: string;
   onFileSelect: (file: DriveFile) => void;
@@ -26,6 +28,7 @@ interface DocGridProps {
 
 export default function DocGrid({
   files,
+  breadcrumbs,
   viewMode,
   sortBy,
   onFileSelect,
@@ -36,7 +39,7 @@ export default function DocGrid({
     <div className={styles.container}>
       <div className={styles.topBar}>
         <div className={styles.breadcrumbs}>
-          MY DRIVE / Projects / Q3
+          {breadcrumbs || 'MY DRIVE'}
         </div>
         <div className={styles.controls}>
           <div className={styles.viewToggle}>

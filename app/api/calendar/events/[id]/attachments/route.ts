@@ -73,7 +73,7 @@ export async function DELETE(
     const event = await getEvent(session.accessToken, calendarId, id);
     const attachments = event.attachments || [];
     
-    const updatedAttachments = attachments.filter((a: any) => a.fileUrl !== fileUrl);
+    const updatedAttachments = attachments.filter((a) => a.fileUrl !== fileUrl);
     
     const updatedEvent = await updateEvent(session.accessToken, calendarId, id, {
       ...event,

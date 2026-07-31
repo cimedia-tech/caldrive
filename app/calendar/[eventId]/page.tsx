@@ -34,13 +34,13 @@ export default function EventPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#fafafa]">
+    <div className="flex h-screen bg-app">
       <div className="flex-1 p-8 overflow-auto">
         <EventDetail event={event} />
       </div>
       <div className="w-96 border-l-2 border-black bg-white p-6">
         <h2 className="mono uppercase font-bold mb-4">PrepBriefing</h2>
-        <div className="p-4 border-2 border-black border-dashed text-center bg-[#fafafa]">
+        <div className="p-4 border-2 border-black border-dashed text-center bg-app">
           <p className="italic serif text-secondary">AI brief placeholder (Phase 5)</p>
         </div>
       </div>

@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { getMonthDates, isToday, isSameDay } from '@/lib/utils/date'
+import { getMonthDates, getDayHeaders, isToday, isSameDay } from '@/lib/utils/date'
+import { useSettingsStore } from '@/lib/store/settings-store'
 import type { CalendarEvent } from '@/lib/store/calendar-store'
 import styles from './MonthView.module.css'
 import { EventCard } from './EventCard'
@@ -14,8 +15,9 @@ interface MonthViewProps {
 }
 
 export function MonthView({ currentDate, events, onDateClick, onEventClick }: MonthViewProps) {
-  const dates = getMonthDates(currentDate.getFullYear(), currentDate.getMonth()).flat()
-  const daysOfWeek = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+  const weekStartsOn = useSettingsStore((s) => s.weekStartsOn)
+  const dates = getMonthDates(currentDate.getFullYear(), currentDate.getMonth(), weekStartsOn).flat()
+  const daysOfWeek = getDayHeaders(weekStartsOn)
   const monthName = currentDate.toLocaleString('default', { month: 'long' })
   
   return (

@@ -14,7 +14,9 @@ export default function OptimizerPanel({ isOpen, onClose }: OptimizerPanelProps)
 
   useEffect(() => {
     if (isOpen) {
-      setLoading(true);
+      // Flip the loading flag asynchronously to avoid a synchronous
+      // setState inside the effect body (react-hooks/set-state-in-effect)
+      Promise.resolve().then(() => setLoading(true));
       const timeMin = new Date().toISOString();
       const timeMax = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
       

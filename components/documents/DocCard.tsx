@@ -36,6 +36,7 @@ export default function DocCard({ file, tags, onClick }: DocCardProps) {
         <div className={styles.name}>{file.name}</div>
         <div className={styles.meta}>
           {new Date(file.modifiedTime).toLocaleDateString()}
+          {file.size ? ` · ${file.size}` : ''}
         </div>
         {tags && tags.length > 0 && (
           <div className={styles.tags}>

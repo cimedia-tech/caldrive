@@ -10,11 +10,11 @@ interface AttachedDocumentsProps {
 }
 
 export default function AttachedDocuments({ eventId, calendarId = "primary" }: AttachedDocumentsProps) {
-  const [attachments, setAttachments] = useState<any[]>([]);
+  const [attachments, setAttachments] = useState<{ fileUrl: string; title: string; mimeType?: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: string; name: string; mimeType?: string; webViewLink?: string }[]>([]);
 
   const fetchAttachments = async () => {
     try {
@@ -31,7 +31,10 @@ export default function AttachedDocuments({ eventId, calendarId = "primary" }: A
   };
 
   useEffect(() => {
-    fetchAttachments();
+    let cancelled = false;
+    Promise.resolve().then(() => { if (!cancelled) fetchAttachments(); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, calendarId]);
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +55,7 @@ export default function AttachedDocuments({ eventId, calendarId = "primary" }: A
     }
   };
 
-  const attachFile = async (file: any) => {
+  const attachFile = async (file: { id: string; name: string; mimeType?: string; webViewLink?: string }) => {
     try {
       const res = await fetch(`/api/calendar/events/${eventId}/attachments`, {
         method: "POST",
