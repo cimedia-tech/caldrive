@@ -12,10 +12,12 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthConfig = {
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || "caldrive_secret_key_9a8b7c6d5e4f3a2b1c",
+  trustHost: true,
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID || "dummy_client_id",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "dummy_client_secret",
       authorization: {
         params: {
           access_type: "offline",
@@ -26,6 +28,7 @@ export const authOptions: NextAuthConfig = {
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
